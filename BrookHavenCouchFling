@@ -1,6 +1,18 @@
 local Speaker = game.Players.LocalPlayer
-local Viticum = game.Players.bianca024675.Character
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
+local Player
+local Viticum
+
+local function findPlayer(Name)
+    for _, v in pairs(Speaker.Character.Parent:GetDescendants()) do
+        if v:IsA("Model") and string.find(tostring(v), Name) and v:FindFirstChild("HumanoidRootPart") then
+            print("Did you mean " .. tostring(v) .. "?")
+            print(v)
+            return tostring(v)
+        end
+    end
+end
 local function CallPart()
     if not game.Workspace:FindFirstChild("ExoInst") then
         local platform = Instance.new("Part")
@@ -12,12 +24,14 @@ local function CallPart()
         platform.CFrame = CFrame.new(-205, -33, -34)
     end
 end
+
+
 local function Teleport()
     local Couch = Speaker.Backpack:FindFirstChild("Couch") or Speaker.Character:FindFirstChild("Couch")
-    task.wait(1)
+    task.wait()
     if Viticum then
-        if Couch then
-            if Viticum.Humanoid.Sit == false then
+        if Viticum.Humanoid.Sit == false then
+            if Couch then
                 Couch.Parent = Speaker.Backpack
                 CallPart()
                 local BeforePos = Speaker.Character.HumanoidRootPart.CFrame
@@ -25,40 +39,67 @@ local function Teleport()
                     if Couch.Parent == Speaker.Backpack then
                         Couch.Parent = Speaker.Character
                     else
-                        for i = 1, 20 do
+                        for i = 1, 50 do
                             game.Workspace.Camera.Focus = Viticum.Head.CFrame
                             Speaker.Character.HumanoidRootPart.CFrame = Viticum.Head.CFrame
                             task.wait()
                         end
-                        repeat 
+                        repeat
                             game.Workspace.Camera.Focus = Viticum.Head.CFrame
-                            Speaker.Character.HumanoidRootPart.CFrame = Viticum.HumanoidRootPart.CFrame * CFrame.new(math.random(-5,5),0,math.random(-5,5)) * CFrame.Angles(math.random(-180,180),math.random(-180,180),math.random(-180,180))
+                            Speaker.Character.HumanoidRootPart.CFrame = Viticum.HumanoidRootPart.CFrame * CFrame.new(math.random(-9,9),math.random(-9,9),math.random(-9,9)) * CFrame.Angles(math.random(-360,360),math.random(-360,360),math.random(-360,360))
                             task.wait()
                         until Viticum.Humanoid.Sit == true
                         Speaker.Character.HumanoidRootPart.CFrame = CFrame.new(-205, -30, -34)
                         task.wait(1)
                         Couch.Parent = Speaker.Backpack
-                        task.wait(1)
+                        task.wait(0.5)
                         Speaker.Character.HumanoidRootPart.CFrame = BeforePos
                         game.Workspace.Camera.Focus = Speaker.Character.HumanoidRootPart.CFrame
                     end
                 end
             else
-                print("Viticum Sitting")
+                local BeforePos = Speaker.Character.HumanoidRootPart.CFrame
+                Speaker.Character.HumanoidRootPart.CFrame = workspace.WorkspaceCom["003_CouchGiveTool"].Seat1.CFrame
+                task.wait(0.5)
+                Speaker.Character.Humanoid.PlatformStand = true
+                task.wait(0.5)
+                Speaker.Character.Humanoid.PlatformStand = false
+                Speaker.Character.HumanoidRootPart.CFrame = BeforePos
+                Teleport()
             end
         else
-            local BeforePos = Speaker.Character.HumanoidRootPart.CFrame
-            Speaker.Character.HumanoidRootPart.CFrame = workspace.WorkspaceCom["003_CouchGiveTool"].Seat1.CFrame
-            task.wait()
-            Speaker.Character.Humanoid.PlatformStand = true
-            task.wait(1)
-            Speaker.Character.HumanoidRootPart.CFrame = BeforePos
-            task.wait()
-            Speaker.Character.Humanoid.PlatformStand = false
-            Teleport()
+            print("Viticum Sitting")
         end
     else
         print("Viticum inexpected")
     end
 end
-Teleport()
+
+
+local Window = Rayfield:CreateWindow({
+   Name = "BrookHaven",
+   LoadingTitle = "BrookHavenScript",
+   LoadingSubtitle = "by ZeroDay",
+   Theme = "Default",
+})
+
+local MainTab = Window:CreateTab("Main", 4483362458)
+
+local MainPlayerInput = MainTab:CreateInput({
+    Name = "Select a Player",
+    CurrentValue = "",
+    PlaceholderText = "Player",
+    RemoveTextAfterFocusLost = false,
+    Flag = "Input1",
+    Callback = function(Text)
+        Player = findPlayer(Text)
+    end,
+})
+
+local MainFlingButton = MainTab:CreateButton({
+    Name = "Couch Fling",
+    Callback = function()
+        Viticum = game.Players[Player].Character
+        Teleport()
+    end,
+})

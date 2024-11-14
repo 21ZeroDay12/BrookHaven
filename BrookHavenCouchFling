@@ -1,0 +1,64 @@
+local Speaker = game.Players.LocalPlayer
+local Viticum = game.Players.bianca024675.Character
+
+local function CallPart()
+    if not game.Workspace:FindFirstChild("ExoInst") then
+        local platform = Instance.new("Part")
+        local folder = Instance.new("Model")
+        folder.Name = "ExoInst"
+        folder.Parent = game.Workspace
+        platform.Parent = folder
+        platform.Anchored = true
+        platform.CFrame = CFrame.new(-205, -33, -34)
+    end
+end
+local function Teleport()
+    local Couch = Speaker.Backpack:FindFirstChild("Couch") or Speaker.Character:FindFirstChild("Couch")
+    task.wait(1)
+    if Viticum then
+        if Couch then
+            if Viticum.Humanoid.Sit == false then
+                Couch.Parent = Speaker.Backpack
+                CallPart()
+                local BeforePos = Speaker.Character.HumanoidRootPart.CFrame
+                for i = 1,2 do
+                    if Couch.Parent == Speaker.Backpack then
+                        Couch.Parent = Speaker.Character
+                    else
+                        for i = 1, 20 do
+                            game.Workspace.Camera.Focus = Viticum.Head.CFrame
+                            Speaker.Character.HumanoidRootPart.CFrame = Viticum.Head.CFrame
+                            task.wait()
+                        end
+                        repeat 
+                            game.Workspace.Camera.Focus = Viticum.Head.CFrame
+                            Speaker.Character.HumanoidRootPart.CFrame = Viticum.HumanoidRootPart.CFrame * CFrame.new(math.random(-5,5),0,math.random(-5,5)) * CFrame.Angles(math.random(-180,180),math.random(-180,180),math.random(-180,180))
+                            task.wait()
+                        until Viticum.Humanoid.Sit == true
+                        Speaker.Character.HumanoidRootPart.CFrame = CFrame.new(-205, -30, -34)
+                        task.wait(1)
+                        Couch.Parent = Speaker.Backpack
+                        task.wait(1)
+                        Speaker.Character.HumanoidRootPart.CFrame = BeforePos
+                        game.Workspace.Camera.Focus = Speaker.Character.HumanoidRootPart.CFrame
+                    end
+                end
+            else
+                print("Viticum Sitting")
+            end
+        else
+            local BeforePos = Speaker.Character.HumanoidRootPart.CFrame
+            Speaker.Character.HumanoidRootPart.CFrame = workspace.WorkspaceCom["003_CouchGiveTool"].Seat1.CFrame
+            task.wait()
+            Speaker.Character.Humanoid.PlatformStand = true
+            task.wait(1)
+            Speaker.Character.HumanoidRootPart.CFrame = BeforePos
+            task.wait()
+            Speaker.Character.Humanoid.PlatformStand = false
+            Teleport()
+        end
+    else
+        print("Viticum inexpected")
+    end
+end
+Teleport()

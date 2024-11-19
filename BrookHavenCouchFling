@@ -25,8 +25,7 @@ local function CallPart()
     end
 end
 
-
-local function Teleport()
+local function CouchFling()
     local Couch = Speaker.Backpack:FindFirstChild("Couch") or Speaker.Character:FindFirstChild("Couch")
     task.wait()
     if Viticum then
@@ -75,7 +74,52 @@ local function Teleport()
     end
 end
 
-
+local function TpToMe()
+    local Couch = Speaker.Backpack:FindFirstChild("Couch") or Speaker.Character:FindFirstChild("Couch")
+    task.wait()
+    if Viticum then
+        if Viticum.Humanoid.Sit == false then
+            if Couch then
+                Couch.Parent = Speaker.Backpack
+                CallPart()
+                local BeforePos = Speaker.Character.HumanoidRootPart.CFrame
+                for i = 1,2 do
+                    if Couch.Parent == Speaker.Backpack then
+                        Couch.Parent = Speaker.Character
+                    else
+                        for i = 1, 50 do
+                            game.Workspace.Camera.Focus = Viticum.Head.CFrame
+                            Speaker.Character.HumanoidRootPart.CFrame = Viticum.Head.CFrame
+                            task.wait()
+                        end
+                        repeat
+                            game.Workspace.Camera.Focus = Viticum.Head.CFrame
+                            Speaker.Character.HumanoidRootPart.CFrame = Viticum.HumanoidRootPart.CFrame * CFrame.new(math.random(-9,9),math.random(-9,9),math.random(-9,9)) * CFrame.Angles(math.random(-360,360),math.random(-360,360),math.random(-360,360))
+                            task.wait()
+                        until Viticum.Humanoid.Sit == true
+                        Speaker.Character.HumanoidRootPart.CFrame = BeforePos
+                        task.wait(1)
+                        Couch.Parent = Speaker.Backpack
+                        game.Workspace.Camera.Focus = Speaker.Character.HumanoidRootPart.CFrame
+                    end
+                end
+            else
+                local BeforePos = Speaker.Character.HumanoidRootPart.CFrame
+                Speaker.Character.HumanoidRootPart.CFrame = workspace.WorkspaceCom["003_CouchGiveTool"].Seat1.CFrame
+                task.wait(0.5)
+                Speaker.Character.Humanoid.PlatformStand = true
+                task.wait(0.5)
+                Speaker.Character.Humanoid.PlatformStand = false
+                Speaker.Character.HumanoidRootPart.CFrame = BeforePos
+                Teleport()
+            end
+        else
+            print("Viticum Sitting")
+        end
+    else
+        print("Viticum inexpected")
+    end
+end
 local Window = Rayfield:CreateWindow({
    Name = "BrookHaven",
    LoadingTitle = "BrookHavenScript",
@@ -100,6 +144,20 @@ local MainFlingButton = MainTab:CreateButton({
     Name = "Couch Fling",
     Callback = function()
         Viticum = game.Players[Player].Character
-        Teleport()
+        CouchFling()
+    end,
+})
+local TeleportToPButton = MainTab:CreateButton({
+    Name = "Tp to me",
+    Callback = function()
+        Viticum = game.Players[Player].Character
+        TpToMe()
+    end,
+})
+local TeleportToPButton = MainTab:CreateButton({
+    Name = "Tp to Player",
+    Callback = function()
+        Viticum = game.Players[Player].Character
+        Speaker.Character.HumanoidRootPart.CFrame = Viticum.HumanoidRootPart.CFrame
     end,
 })
